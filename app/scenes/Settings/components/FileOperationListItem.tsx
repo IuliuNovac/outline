@@ -52,6 +52,7 @@ const FileOperationListItem = ({ fileOperation }: Props) => {
     [FileOperationFormat.MarkdownZip]: "Markdown",
     [FileOperationFormat.HTMLZip]: "HTML",
     [FileOperationFormat.PDF]: "PDF",
+    [FileOperationFormat.Docx]: "Word",
   };
 
   const format = formatMapping[fileOperation.format];

@@ -69,7 +69,7 @@ export default abstract class ExportTask extends BaseTask<Props> {
       const url = await FileStorage.store({
         body: readStream,
         contentLength: stat.size,
-        contentType: "application/zip",
+        contentType: this.getContentType(),
         key: fileOperation.key,
         acl: "private",
       });
@@ -214,6 +214,16 @@ export default abstract class ExportTask extends BaseTask<Props> {
     document: Document,
     documentStructure: NavigationNode[]
   ): Promise<string>;
+
+  /**
+   * The MIME type used when uploading the export artifact to FileStorage.
+   * Subclasses override to advertise their concrete output format (e.g.,
+   * "application/zip" for the existing zip tasks, "application/pdf" for the
+   * PDF task, the DOCX OOXML type for the DOCX task).
+   *
+   * @returns the IANA media type string.
+   */
+  protected abstract getContentType(): string;
 
   /**
    * Update the state of the underlying FileOperation in the database and send

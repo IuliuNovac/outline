@@ -15,6 +15,15 @@ import ExportTask from "./ExportTask";
 
 export default abstract class ExportDocumentTreeTask extends ExportTask {
   /**
+   * Returns the MIME type used to upload the produced zip artifact.
+   *
+   * @returns the zip MIME type.
+   */
+  protected getContentType(): string {
+    return "application/zip";
+  }
+
+  /**
    * Exports the document tree to the given zip instance.
    *
    * @param zip The yazl ZipFile to add files to

@@ -188,4 +188,13 @@ export default class ExportJSONTask extends ExportTask {
   public async exportDocument(): Promise<string> {
     throw new Error("JSON export unsupported for individual document.");
   }
+
+  /**
+   * Returns the MIME type used to upload the produced zip artifact.
+   *
+   * @returns the zip MIME type.
+   */
+  protected getContentType(): string {
+    return "application/zip";
+  }
 }

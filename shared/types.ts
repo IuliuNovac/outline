@@ -57,6 +57,7 @@ export enum ExportContentType {
   Markdown = "text/markdown",
   Html = "text/html",
   Pdf = "application/pdf",
+  Docx = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 }
 
 export enum FileOperationFormat {
@@ -64,6 +65,7 @@ export enum FileOperationFormat {
   MarkdownZip = "outline-markdown",
   HTMLZip = "html",
   PDF = "pdf",
+  Docx = "docx",
   Notion = "notion",
 }
 

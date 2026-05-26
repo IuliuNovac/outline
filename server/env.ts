@@ -738,6 +738,37 @@ export class Environment {
     this.toOptionalNumber(environment.MAXIMUM_EXPORT_SIZE) ?? os.totalmem();
 
   /**
+   * Base URL of a Gotenberg (https://gotenberg.dev) sidecar service used to
+   * render PDF exports. When unset the PDF export option is hidden in the UI.
+   */
+  @IsOptional()
+  @IsUrl({
+    require_tld: false,
+    require_protocol: true,
+    protocols: ["http", "https"],
+  })
+  public GOTENBERG_URL = this.toOptionalString(environment.GOTENBERG_URL);
+
+  /**
+   * Whether PDF document export is enabled. Frontend visibility flag derived
+   * from the presence of a configured Gotenberg sidecar.
+   */
+  @Public
+  @IsBoolean()
+  public PDF_EXPORT_ENABLED = !!this.GOTENBERG_URL;
+
+  /**
+   * Whether Word (.docx) document export is enabled. The DOCX renderer is
+   * in-process so this flag defaults to true; operators may disable it by
+   * setting `DOCX_EXPORT_ENABLED=false`.
+   */
+  @Public
+  @IsBoolean()
+  public DOCX_EXPORT_ENABLED = this.toBoolean(
+    environment.DOCX_EXPORT_ENABLED ?? "true"
+  );
+
+  /**
    * The number of seconds access tokens issue by the OAuth provider are valid.
    */
   @IsNumber()
