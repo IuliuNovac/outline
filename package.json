@@ -105,6 +105,7 @@
     "@simplewebauthn/server": "^13.2.3",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.13.24",
+    "@turbodocx/html-to-docx": "^1.21.0",
     "@types/form-data": "^2.5.2",
     "@types/mailparser": "^3.4.6",
     "@types/pako": "^2.0.4",

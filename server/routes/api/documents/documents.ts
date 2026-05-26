@@ -819,10 +819,16 @@ router.post(
         ? FileOperationFormat.MarkdownZip
         : accept?.includes("application/pdf")
           ? FileOperationFormat.PDF
-          : null;
+          : accept?.includes(
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              )
+            ? FileOperationFormat.Docx
+            : null;
 
     const requiresAsyncExport =
-      includeChildDocuments || format === FileOperationFormat.PDF;
+      includeChildDocuments ||
+      format === FileOperationFormat.PDF ||
+      format === FileOperationFormat.Docx;
 
     if (requiresAsyncExport) {
       if (!format) {
@@ -837,9 +843,21 @@ router.post(
         );
       }
 
+      if (format === FileOperationFormat.Docx && !env.DOCX_EXPORT_ENABLED) {
+        throw IncorrectEditionError(
+          "DOCX export is disabled; set DOCX_EXPORT_ENABLED=true to enable"
+        );
+      }
+
       if (format === FileOperationFormat.PDF && includeChildDocuments) {
         throw InvalidRequestError(
           "PDF tree export is not yet supported; use includeChildDocuments=false"
+        );
+      }
+
+      if (format === FileOperationFormat.Docx && includeChildDocuments) {
+        throw InvalidRequestError(
+          "DOCX tree export is not yet supported; use includeChildDocuments=false"
         );
       }
 

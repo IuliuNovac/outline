@@ -1,6 +1,7 @@
 import { FileOperationFormat, FileOperationType } from "@shared/types";
 import { FileOperation } from "@server/models";
 import type { Event as TEvent, FileOperationEvent } from "@server/types";
+import ExportDocxTask from "../tasks/ExportDocxTask";
 import ExportHTMLZipTask from "../tasks/ExportHTMLZipTask";
 import ExportJSONTask from "../tasks/ExportJSONTask";
 import ExportMarkdownZipTask from "../tasks/ExportMarkdownZipTask";
@@ -40,6 +41,11 @@ export default class FileOperationCreatedProcessor extends BaseProcessor {
           break;
         case FileOperationFormat.PDF:
           await new ExportPDFTask().schedule({
+            fileOperationId: event.modelId,
+          });
+          break;
+        case FileOperationFormat.Docx:
+          await new ExportDocxTask().schedule({
             fileOperationId: event.modelId,
           });
           break;
