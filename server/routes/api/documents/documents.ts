@@ -821,16 +821,25 @@ router.post(
           ? FileOperationFormat.PDF
           : null;
 
-    if (format === FileOperationFormat.PDF) {
-      throw IncorrectEditionError(
-        "PDF export is not available in the community edition"
-      );
-    }
+    const requiresAsyncExport =
+      includeChildDocuments || format === FileOperationFormat.PDF;
 
-    if (includeChildDocuments) {
+    if (requiresAsyncExport) {
       if (!format) {
         throw InvalidRequestError(
           "format needed for exporting nested documents"
+        );
+      }
+
+      if (format === FileOperationFormat.PDF && !env.PDF_EXPORT_ENABLED) {
+        throw IncorrectEditionError(
+          "PDF export requires GOTENBERG_URL to be configured"
+        );
+      }
+
+      if (format === FileOperationFormat.PDF && includeChildDocuments) {
+        throw InvalidRequestError(
+          "PDF tree export is not yet supported; use includeChildDocuments=false"
         );
       }
 

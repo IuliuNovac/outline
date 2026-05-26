@@ -4,6 +4,7 @@ import type { Event as TEvent, FileOperationEvent } from "@server/types";
 import ExportHTMLZipTask from "../tasks/ExportHTMLZipTask";
 import ExportJSONTask from "../tasks/ExportJSONTask";
 import ExportMarkdownZipTask from "../tasks/ExportMarkdownZipTask";
+import ExportPDFTask from "../tasks/ExportPDFTask";
 import BaseProcessor from "./BaseProcessor";
 
 export default class FileOperationCreatedProcessor extends BaseProcessor {
@@ -34,6 +35,11 @@ export default class FileOperationCreatedProcessor extends BaseProcessor {
           break;
         case FileOperationFormat.JSON:
           await new ExportJSONTask().schedule({
+            fileOperationId: event.modelId,
+          });
+          break;
+        case FileOperationFormat.PDF:
+          await new ExportPDFTask().schedule({
             fileOperationId: event.modelId,
           });
           break;
