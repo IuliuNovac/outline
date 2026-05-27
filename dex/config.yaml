@@ -1,0 +1,50 @@
+# Dex OIDC config — LABELED LOCAL-ONLY DEFAULT.
+#
+# Mounts read-only into the dex container at /etc/dex/config.yaml.
+# Storage is in-memory (signing keys rotate on dex restart); for a production
+# stable install, switch to type: sqlite3 with a persistent volume.
+
+issuer: http://localhost:5556/dex
+
+storage:
+  type: memory
+
+web:
+  http: 0.0.0.0:5556
+
+telemetry:
+  http: ""
+
+logger:
+  level: "info"
+  format: "text"
+
+oauth2:
+  responseTypes: ["code"]
+  skipApprovalScreen: true
+  alwaysShowLoginScreen: false
+
+staticClients:
+  - id: outline
+    name: Outline
+    secretEnv: OUTLINE_OIDC_CLIENT_SECRET
+    redirectURIs:
+      - http://localhost:3000/auth/oidc.callback
+      - http://localhost:3001/auth/oidc.callback
+      - http://localhost:3002/auth/oidc.callback
+      - http://localhost:3003/auth/oidc.callback
+      - http://localhost:3004/auth/oidc.callback
+      - http://localhost:3005/auth/oidc.callback
+      - http://localhost:3006/auth/oidc.callback
+      - http://localhost:3007/auth/oidc.callback
+      - http://localhost:3008/auth/oidc.callback
+      - http://localhost:3009/auth/oidc.callback
+
+enablePasswordDB: true
+staticPasswords:
+  - email: "admin@nova.local"
+    # bcrypt cost 12 of "novalocal" — LABELED LOCAL-ONLY DEFAULT.
+    # Re-hash via: python3 -c 'import bcrypt; print(bcrypt.hashpw(b"<pwd>", bcrypt.gensalt(12)).decode())'
+    hash: "$2b$12$uTU2Crje6YEwXm/xyHPmMuQzHRP/vNmEGoeDC1ZBPvYD.gi/eIoAe"
+    username: "admin"
+    userID: "08a8684b-db88-4b73-9b07-c63cd47d6e85"

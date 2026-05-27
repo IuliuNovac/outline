@@ -1,0 +1,69 @@
+# docker-compose.nova.yml — self-contained local Outline stack for Nova.
+#
+# Rendered with values from .env (rendered by scripts/install-outline.sh from
+# .env.template). All ports bound to 127.0.0.1 for security. Dex uses in-memory
+# storage — acceptable for local dev; signing keys rotate on dex restart.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    user: "postgres:postgres"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  redis:
+    image: redis:7-alpine
+    user: "redis:redis"
+    ports:
+      - "127.0.0.1:${REDIS_PORT}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  dex:
+    image: ghcr.io/dexidp/dex:v2.41.1
+    command: ["dex", "serve", "/etc/dex/config.yaml"]
+    environment:
+      OUTLINE_URL: ${URL}
+      OUTLINE_OIDC_CLIENT_SECRET: ${OUTLINE_OIDC_CLIENT_SECRET}
+    ports:
+      - "127.0.0.1:${DEX_PORT}:5556"
+    volumes:
+      - ./dex/config.yaml:/etc/dex/config.yaml:ro
+
+  outline:
+    image: outlinewiki/outline:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      dex:
+        condition: service_started
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:${OUTLINE_PORT}:3000"
+    volumes:
+      - outline_data:/var/lib/outline/data
+      - ./scripts/nova-bootstrap.js:/opt/outline/nova-bootstrap.js:ro
+
+volumes:
+  postgres_data:
+  redis_data:
+  outline_data:
